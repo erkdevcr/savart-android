@@ -5,11 +5,11 @@ GitHub baja la PWA actual de [erkdevcr/savart](https://github.com/erkdevcr/savar
 (solo lectura) y la mete en la app.
 
 ## Bajar el APK
-Pestaña **Releases → latest → `savart.apk`**.
+Pestaña **Releases → latest → `savart-<versión>.apk`**.
 
 ## Compilar
 - Automático en cada cambio a `main`.
-- Solo: cada hora revisa si `erkdevcr/savart` tiene un commit nuevo; si lo tiene, compila (sin token).
+- Solo: una vez por semana (lunes) revisa si `erkdevcr/savart` tiene un commit nuevo; si lo tiene, compila (sin token).
 - A mano: **Actions → Build APK → Run workflow**.
 
 ## Firma

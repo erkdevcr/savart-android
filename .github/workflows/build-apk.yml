@@ -1,7 +1,7 @@
 # Compila el APK de Savart en GitHub (sin Android Studio).
 # 1) Baja la PWA actual de erkdevcr/savart (solo lectura, nunca escribe en ese repo)
 # 2) La mete en la app (cap sync)  3) Compila y firma  4) Publica en Releases → "latest"
-# Cada hora revisa si erkdevcr/savart cambió; si cambió, compila solo (no hace falta token).
+# Una vez por semana revisa si erkdevcr/savart cambió; si cambió, compila solo (no hace falta token).
 name: Build APK
 
 on:
@@ -9,7 +9,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '23 * * * *'    # cada hora: ¿hay commit nuevo en savart?
+    - cron: '23 6 * * 1'    # lunes 06:23 UTC (domingo 00:23 en Costa Rica): ¿hay commit nuevo en savart?
 
 permissions:
   contents: write           # para publicar el APK en Releases de ESTE repo
@@ -108,9 +108,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk savart.apk
+          APK="savart-${WEB_VERSION}.apk"
+          cp android/app/build/outputs/apk/debug/app-debug.apk "$APK"
           gh release delete latest --yes --cleanup-tag || true
-          gh release create latest savart.apk \
+          gh release create latest "$APK" \
             --title "Savart ${WEB_VERSION} (build ${{ github.run_number }})" \
             --notes "PWA ${WEB_VERSION} · compilado $(date -u +'%Y-%m-%d %H:%M UTC')
           web-sha: ${{ needs.check.outputs.sha }}"
