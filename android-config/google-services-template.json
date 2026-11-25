@@ -1,0 +1,60 @@
+{
+  "_README": "ESTE ARCHIVO ES UN TEMPLATE — NO FUNCIONA TAL CUAL.",
+  "_INSTRUCCIONES": [
+    "1. Ve a https://console.firebase.google.com (o usa Google Cloud Console)",
+    "2. Crea un proyecto o usa uno existente",
+    "3. Agrega una app Android con package name: com.savart.app",
+    "4. Descarga el google-services.json real",
+    "5. Colócalo en android/app/google-services.json"
+  ],
+  "_ALTERNATIVA_SIN_FIREBASE": [
+    "Si no quieres usar Firebase, puedes generar el google-services.json desde",
+    "Google Cloud Console directamente:",
+    "https://developers.google.com/identity/sign-in/android/start-integrating#get_your_backend_servers_oauth_20_client_id"
+  ],
+  "project_info": {
+    "project_number": "TU_PROJECT_NUMBER",
+    "project_id": "savart-app",
+    "storage_bucket": "savart-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:TU_PROJECT_NUMBER:android:HASH",
+        "android_client_info": {
+          "package_name": "com.savart.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "TU_ANDROID_CLIENT_ID.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.savart.app",
+            "certificate_hash": "TU_SHA1_FINGERPRINT"
+          }
+        },
+        {
+          "client_id": "409671846168-u60nj8ib48se183sarosn0sicu8g4vvb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "TU_API_KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "409671846168-u60nj8ib48se183sarosn0sicu8g4vvb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

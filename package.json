@@ -1,0 +1,20 @@
+{
+  "name": "savart-android",
+  "version": "1.7.63",
+  "description": "Savart — Reproductor de música desde Google Drive (Android nativo)",
+  "private": true,
+  "scripts": {
+    "sync":   "npx cap sync android",
+    "open":   "npx cap open android",
+    "build":  "npx cap sync android && npx cap open android",
+    "update": "node scripts/patch-android.js && npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/core":    "^6.0.0",
+    "@codetrix-studio/capacitor-google-auth": "3.4.0-rc.4"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  }
+}

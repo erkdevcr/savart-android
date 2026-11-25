@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "409671846168",
+    "project_id": "savart-494419",
+    "storage_bucket": ""
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:409671846168:android:ab8c95afa79fe5d2",
+        "android_client_info": {
+          "package_name": "com.savart.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "409671846168-7iibl1r5ngvh9lse4dl9l74far96mt29.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.savart.app",
+            "certificate_hash": "ab8c95afa79fe5d2ad4d9b1ef1bbef684d45dfd0"
+          }
+        },
+        {
+          "client_id": "409671846168-u60nj8ib48se183sarosn0sicu8g4vvb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": ""
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "409671846168-u60nj8ib48se183sarosn0sicu8g4vvb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

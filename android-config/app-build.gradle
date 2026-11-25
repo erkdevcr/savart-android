@@ -1,0 +1,70 @@
+/*
+  android/app/build.gradle  — modificaciones para Savart
+  ─────────────────────────────────────────────────────
+  INSTRUCCIONES: Después de correr "npx cap add android", abre
+  android/app/build.gradle y aplica los cambios marcados con ← MODIFICAR / ← AGREGAR.
+
+  El archivo generado por Capacitor lucirá diferente pero los valores clave son estos.
+*/
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'   // ← AGREGAR esta línea
+
+android {
+    namespace "com.savart.app"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        applicationId "com.savart.app"
+        minSdkVersion 22          // ← MODIFICAR: mínimo 22 (Android 5.1)
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.7.63"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+            ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    flatDir {
+        dirs '../capacitor-cordova-android-plugins/src/main'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+
+    // ← AGREGAR: Google Sign-In SDK (requerido por @codetrix-studio/capacitor-google-auth)
+    implementation 'com.google.android.gms:play-services-auth:21.0.0'
+
+    // ← AGREGAR: Firebase / Google Services (requerido por google-services.json)
+    implementation platform('com.google.firebase:firebase-bom:32.7.1')
+
+    testImplementation "junit:junit:$jUnitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}

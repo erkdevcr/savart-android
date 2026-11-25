@@ -1,0 +1,14 @@
+# Dependencias y copia web (el flujo de GitHub las genera en cada compilación)
+node_modules/
+www/
+# Salidas de compilación y archivos locales
+android/build/
+android/app/build/
+android/.gradle/
+android/.idea/
+android/local.properties
+.idea/
+.DS_Store
+# Llaves de firma: NUNCA al repo (van como secreto de GitHub)
+*.keystore
+*.jks

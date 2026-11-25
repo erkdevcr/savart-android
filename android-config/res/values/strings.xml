@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  strings.xml para Savart
+  INSTRUCCIONES: Después de correr "npx cap add android", reemplaza (o fusiona)
+  el contenido de android/app/src/main/res/values/strings.xml con este archivo.
+-->
+<resources>
+  <string name="app_name">Savart</string>
+  <string name="title_activity_main">Savart</string>
+  <string name="package_name">com.savart.app</string>
+
+  <!--
+    Web Client ID de Google OAuth.
+    IMPORTANTE: Este debe ser el ID de cliente WEB de tu proyecto en Google Cloud Console,
+    NO el ID de cliente Android. El plugin @codetrix-studio/capacitor-google-auth lo usa
+    para obtener un ID token firmado con la server_client_id correcta.
+
+    Obtén el tuyo en: https://console.cloud.google.com/apis/credentials
+    → Busca el cliente OAuth de tipo "Aplicación web"
+  -->
+  <string name="server_client_id">409671846168-u60nj8ib48se183sarosn0sicu8g4vvb.apps.googleusercontent.com</string>
+
+  <!--
+    IMPORTANTE — OAuth Client ID para Android:
+    Debes crear un NUEVO cliente OAuth en Google Cloud Console de tipo "Android" con:
+      - Package name: com.savart.app
+      - SHA-1 certificate fingerprint de tu keystore de debug/release
+
+    Para obtener el SHA-1 de debug:
+      cd android && ./gradlew signingReport
+
+    Luego en Google Cloud Console → APIs & Services → Credentials → Create Credentials
+    → OAuth client ID → Android → pega el package name y el SHA-1
+
+    El ID de cliente Android generado NO va en este archivo — Google lo detecta
+    automáticamente a través del google-services.json que debes colocar en
+    android/app/google-services.json
+  -->
+
+</resources>

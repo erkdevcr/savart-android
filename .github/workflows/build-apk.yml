@@ -1,0 +1,78 @@
+# Compila el APK de Savart en GitHub (sin Android Studio).
+# 1) Baja la PWA actual de erkdevcr/savart (solo lectura, nunca escribe en ese repo)
+# 2) La mete en la app (cap sync)  3) Compila y firma  4) Publica en Releases → "latest"
+name: Build APK
+
+on:
+  workflow_dispatch:        # botón "Run workflow" en la pestaña Actions
+  push:
+    branches: [main]
+
+permissions:
+  contents: write           # para publicar el APK en Releases de ESTE repo
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Código de la app Android
+        uses: actions/checkout@v4
+
+      - name: PWA actual (erkdevcr/savart, solo lectura)
+        uses: actions/checkout@v4
+        with:
+          repository: erkdevcr/savart
+          path: web
+          # Si el repo savart es privado, crear el secreto WEB_REPO_TOKEN (token de solo lectura)
+          token: ${{ secrets.WEB_REPO_TOKEN || github.token }}
+
+      - name: Copiar la PWA a www/
+        run: |
+          rm -rf www && mkdir www
+          rsync -a --exclude '.git' --exclude '.github' web/ www/
+          VER=$(grep -oE "APP_VERSION *= *'[^']+'" www/sw.js | grep -oE "[0-9][0-9.]*" | head -1)
+          echo "WEB_VERSION=${VER:-0}" >> "$GITHUB_ENV"
+          echo "PWA versión: ${VER}"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Instalar dependencias y sincronizar Capacitor
+        run: |
+          npm ci
+          npx cap sync android
+
+      - name: Llave de firma (la misma de la Mac)
+        env:
+          KS: ${{ secrets.DEBUG_KEYSTORE_B64 }}
+        run: |
+          mkdir -p ~/.android
+          if [ -n "$KS" ]; then
+            echo "$KS" | base64 -d > ~/.android/debug.keystore
+            echo "Usando la llave de firma del secreto DEBUG_KEYSTORE_B64"
+          else
+            echo "::warning::Falta el secreto DEBUG_KEYSTORE_B64 — el APK sale con otra firma: el login nativo de Google fallará y no se instala encima del actual."
+          fi
+
+      - name: Compilar APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug -Pvc=${{ github.run_number }} -Pvn="${WEB_VERSION}" --no-daemon
+
+      - name: Publicar en Releases (latest)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk savart.apk
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest savart.apk \
+            --title "Savart ${WEB_VERSION} (build ${{ github.run_number }})" \
+            --notes "PWA ${WEB_VERSION} · compilado $(date -u +'%Y-%m-%d %H:%M UTC')"
