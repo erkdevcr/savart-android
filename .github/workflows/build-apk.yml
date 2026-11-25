@@ -71,6 +71,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+          cache: gradle            # guarda las dependencias entre compilaciones
 
       - name: Instalar dependencias y sincronizar Capacitor
         run: |
@@ -96,7 +97,12 @@ jobs:
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug -Pvc=${{ github.run_number }} -Pvn="${WEB_VERSION}" --no-daemon
+          # Reintenta si Maven Central responde 429 (demasiadas solicitudes)
+          for n in 1 2 3; do
+            ./gradlew assembleDebug -Pvc=${{ github.run_number }} -Pvn="${WEB_VERSION}" --no-daemon && exit 0
+            echo "::warning::Intento $n falló, reintento en $((n*45))s"; sleep $((n*45))
+          done
+          exit 1
 
       - name: Publicar en Releases (latest)
         env:
