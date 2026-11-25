@@ -1,18 +1,45 @@
 # Compila el APK de Savart en GitHub (sin Android Studio).
 # 1) Baja la PWA actual de erkdevcr/savart (solo lectura, nunca escribe en ese repo)
 # 2) La mete en la app (cap sync)  3) Compila y firma  4) Publica en Releases → "latest"
+# Cada hora revisa si erkdevcr/savart cambió; si cambió, compila solo (no hace falta token).
 name: Build APK
 
 on:
   workflow_dispatch:        # botón "Run workflow" en la pestaña Actions
   push:
     branches: [main]
+  schedule:
+    - cron: '23 * * * *'    # cada hora: ¿hay commit nuevo en savart?
 
 permissions:
   contents: write           # para publicar el APK en Releases de ESTE repo
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.c.outputs.sha }}
+      changed: ${{ steps.c.outputs.changed }}
+    steps:
+      - id: c
+        name: ¿Cambió savart desde el último APK?
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SHA=$(git ls-remote https://github.com/erkdevcr/savart HEAD | cut -f1)
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          LAST=$(gh release view latest -R "$GITHUB_REPOSITORY" --json body -q .body 2>/dev/null | grep -oE 'web-sha: [0-9a-f]+' | cut -d' ' -f2)
+          echo "savart: $SHA · último APK: ${LAST:-ninguno}"
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$SHA" != "$LAST" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Sin cambios en savart — no se compila."
+          fi
+
   build:
+    needs: check
+    if: needs.check.outputs.changed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Código de la app Android
@@ -22,6 +49,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: erkdevcr/savart
+          ref: ${{ needs.check.outputs.sha }}
           path: web
           # Si el repo savart es privado, crear el secreto WEB_REPO_TOKEN (token de solo lectura)
           token: ${{ secrets.WEB_REPO_TOKEN || github.token }}
@@ -78,4 +106,5 @@ jobs:
           gh release delete latest --yes --cleanup-tag || true
           gh release create latest savart.apk \
             --title "Savart ${WEB_VERSION} (build ${{ github.run_number }})" \
-            --notes "PWA ${WEB_VERSION} · compilado $(date -u +'%Y-%m-%d %H:%M UTC')"
+            --notes "PWA ${WEB_VERSION} · compilado $(date -u +'%Y-%m-%d %H:%M UTC')
+          web-sha: ${{ needs.check.outputs.sha }}"

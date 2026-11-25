@@ -9,7 +9,8 @@ Pestaña **Releases → latest → `savart.apk`**.
 
 ## Compilar
 - Automático en cada cambio a `main`.
-- A mano: **Actions → Build APK → Run workflow** (por ejemplo, después de publicar una versión nueva de la PWA).
+- Solo: cada hora revisa si `erkdevcr/savart` tiene un commit nuevo; si lo tiene, compila (sin token).
+- A mano: **Actions → Build APK → Run workflow**.
 
 ## Firma
 `signing/debug.keystore` es la llave fija de la app (alias `androiddebugkey`, contraseña estándar `android`).
