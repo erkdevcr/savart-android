@@ -1,6 +1,6 @@
 # Compila el APK de Savart en GitHub (sin Android Studio).
 # 1) Baja la PWA actual de erkdevcr/savart (solo lectura, nunca escribe en ese repo)
-# 2) La mete en la app (cap sync)  3) Compila y firma  4) Publica en Releases → "latest"
+# 2) La mete en la app (cap sync)  3) Compila y firma  4) Publica un release nuevo (se conservan todos; el más nuevo queda como "Latest")
 # Una vez por semana revisa si erkdevcr/savart cambió; si cambió, compila solo (no hace falta token).
 name: Build APK
 
@@ -28,7 +28,7 @@ jobs:
         run: |
           SHA=$(git ls-remote https://github.com/erkdevcr/savart HEAD | cut -f1)
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
-          LAST=$(gh release view latest -R "$GITHUB_REPOSITORY" --json body -q .body 2>/dev/null | grep -oE 'web-sha: [0-9a-f]+' | cut -d' ' -f2)
+          LAST=$(gh release view -R "$GITHUB_REPOSITORY" --json body -q .body 2>/dev/null | grep -oE 'web-sha: [0-9a-f]+' | cut -d' ' -f2)
           echo "savart: $SHA · último APK: ${LAST:-ninguno}"
           if [ "${{ github.event_name }}" != "schedule" ] || [ "$SHA" != "$LAST" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
@@ -104,14 +104,16 @@ jobs:
           done
           exit 1
 
-      - name: Publicar en Releases (latest)
+      - name: Publicar release nuevo (se conservan los anteriores)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           APK="savart-${WEB_VERSION}.apk"
           cp android/app/build/outputs/apk/debug/app-debug.apk "$APK"
-          gh release delete latest --yes --cleanup-tag || true
-          gh release create latest "$APK" \
+          TAG="v${WEB_VERSION}-b${{ github.run_number }}"
+          # El viejo release fijo "latest" (de antes) se quita una sola vez; los demás se conservan
+          gh release delete latest --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$TAG" "$APK" --latest \
             --title "Savart ${WEB_VERSION} (build ${{ github.run_number }})" \
             --notes "PWA ${WEB_VERSION} · compilado $(date -u +'%Y-%m-%d %H:%M UTC')
           web-sha: ${{ needs.check.outputs.sha }}"
