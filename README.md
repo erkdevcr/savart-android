@@ -11,7 +11,12 @@ Pestaña **Releases → latest → `savart.apk`**.
 - Automático en cada cambio a `main`.
 - A mano: **Actions → Build APK → Run workflow** (por ejemplo, después de publicar una versión nueva de la PWA).
 
-## Secretos (Settings → Secrets and variables → Actions)
-- `DEBUG_KEYSTORE_B64` — llave de firma de la Mac (`~/.android/debug.keystore`) en base64.
-  Con ella el login nativo de Google sigue funcionando y el APK se instala encima del anterior.
-- `WEB_REPO_TOKEN` — solo si `erkdevcr/savart` es privado (token de solo lectura).
+## Firma
+`signing/debug.keystore` es la llave fija de la app (alias `androiddebugkey`, contraseña estándar `android`).
+Todas las compilaciones firman con ella, así cada APK se instala encima del anterior.
+Su huella SHA-1 debe estar registrada en Google Cloud (cliente OAuth Android de `com.savart.app`)
+para que funcione el inicio de sesión nativo de Google:
+
+`18:0D:48:8D:EA:DB:9B:EC:C0:81:1A:85:06:8C:49:8E:AB:4B:54:D2`
+
+Opcional: el secreto `DEBUG_KEYSTORE_B64` (llave en base64) tiene prioridad sobre el archivo.

@@ -12,3 +12,5 @@ android/local.properties
 # Llaves de firma: NUNCA al repo (van como secreto de GitHub)
 *.keystore
 *.jks
+# …salvo la llave de depuración fija de la app (repo privado, contraseña estándar "android")
+!signing/debug.keystore
